@@ -18,13 +18,12 @@
 void	fill_zero(int *numbers);
 void	get_line(char *s, char **av);
 void	allocate(char **av);
-int		get_numbers(char **av);
+int		get_numbers(char **av, int *sum2);
 int		check_numbers(int *numbers);
 int		increase(int *numbers, int i);
 int		decrease(int *numbers, int i);
 void	free_mem(char **av, int i);
-int		check_double(int *numbers);
-int		*remove_n(int *numbers, int k, int i);
+int		double_check(int *numbers);
 
 int main()
 {
@@ -48,10 +47,12 @@ int main()
 		s[b_read] = '\0';
 		get_line(s, av);
 	}
-	int sum = get_numbers(av);
-	printf("%i\n", sum);
-	free_mem(av, 999);
 	close(fd);
+	int sum2 = 0;
+	int sum = get_numbers(av, &sum2);
+	printf("First answer: %i\n", sum);
+	printf("Second answer: %i\n", sum2 + sum);
+	free_mem(av, 999);
 }
 
 void	free_mem(char **av, int i)
@@ -64,7 +65,7 @@ void	free_mem(char **av, int i)
 	free(av);
 }
 
-int	get_numbers(char **av)
+int	get_numbers(char **av, int *sum2)
 {
 	int i = 0;
 	int sum = 0;
@@ -88,34 +89,35 @@ int	get_numbers(char **av)
 		}
 		sum += check_numbers(numbers);
 		if (!check_numbers(numbers))
-			sum += check_double(numbers);
+			*sum2 += double_check(numbers);
 		fill_zero(numbers);
 		i++;
 	}
 	return (sum);
 }
 
-int	check_double(int *numbers)
+int	double_check(int *numbers)
 {
-	static int k;
-	while (k )
+	int	n[10];
+	fill_zero(n);
+	int k = 0;
+	while (numbers[k] != 0)
 	{
-		remove_n(numbers, k, i);
-		if (check_numbers(numbers))
+		int i = 0;
+		int a = 0;
+		while (numbers[a] != 0)
+		{
+			if (k == i)
+				a++;
+			n[i] = numbers[a];
+			i++;
+			a++;
+		}
+		if (check_numbers(n))
 			return (1);
-		k--;
-	}
-	return (0);
-}
-
-int	*remove_n(int *numbers, int k, int i)
-{
-	while (k < i)
-	{
-		numbers[k] = numbers[k +1];
 		k++;
 	}
-	return (numbers);
+	return (0);
 }
 
 int	check_numbers(int *numbers)
