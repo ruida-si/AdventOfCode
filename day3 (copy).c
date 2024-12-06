@@ -21,11 +21,14 @@ int		get_numbers(char *s, int *i);
 int		compare(char *comp, char *s);
 char	*copy_last(char *s);
 char	*join(char *last, char *s);
-int		get_string(char *s, char *last);
+int		get_string(char *s, char *last, char *last2, int *sum2);
+int		get_do(char *s, char *comp, int *i);
+char	*copy_last2(char *s);
 
 int	main()
 {
 	int sum = 0;
+	int sum2 = 0;
 	char s[31];
 	int fd = open("input3", O_RDONLY);
 	if (fd < 0)
@@ -35,25 +38,61 @@ int	main()
 	}
 	int b_read = 1;
 	char *last = NULL;
+	char *last2 = NULL;
 	while (b_read)
 	{
 		b_read = read(fd, s, 30);
 		if (b_read <= 0)
 			break ;
 		s[b_read] = '\0';
-		sum += get_string(s, last);
+		sum += get_string(s, last, last2, &sum2);
 		last = copy_last(s);
+		last2 = copy_last2(s);
 	}
 	free(last);
-	printf("\033[1;32mFirst answer:\033[0m %i\n", sum);
+	free(last2);
+	printf("%i\n", sum);
+	printf("%i\n", sum - sum2);
 	close(fd);
 }
 
-int	get_string(char *s, char *last)
+char *copy_last2(char *s)
 {
+	char *last = malloc(7);
+	if (!last)
+		return (NULL);
+	int i = 14;
+	int j = 0;
+	while(s[i])
+	{
+		last[j++] = s[i++];
+	}
+	last[j] = '\0';
+	return (last);
+}
+
+int	get_do(char *s, char *comp, int *i)
+{
+	while (s[*i])
+	{
+		if (s[*i] == 'd')
+		{
+			if (compare(comp, &s[*i]))
+				return (1);
+		}
+		(*i)++;
+	}
+	return (0);
+}
+
+int	get_string(char *s, char *last, char *last2, int *sum2)
+{
+	int i = 0;
 	int sum = 0;
 	static int n;
+	static int dont = 0;
 	char *dest = NULL;
+	char *dest2 = NULL;
 
 	if (!n)
 	{
@@ -63,10 +102,28 @@ int	get_string(char *s, char *last)
 	else
 	{
 		dest = join(last, s);
+		dest2 = join(last2, s);
 		sum += get_line(dest);
+		if (dont)
+		{
+			*sum2 += sum;
+		}
+		if (get_do(dest2, "don't()", &i))
+		{
+			*sum2 += get_line(dest2+i);
+			dont = 1;
+		}		
+		if (get_do(dest2, "do()", &i))
+		{
+			dont = 0;
+			dest2[i] = '\0';
+			*sum2 += get_line(dest);
+		}		
 		free(dest);
+		free(dest2);
 		free(last);
-	}
+		free(last2);
+	}	
 	return (sum);
 }
 
@@ -82,7 +139,7 @@ char *copy_last(char *s)
 		last[j++] = s[i++];
 	}
 	last[j] = '\0';
-	if (get_line(last))
+	if (check_mult(last))
 	{
 		last[0] = '\0';
 	}
