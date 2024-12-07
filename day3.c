@@ -22,7 +22,7 @@ int		compare(char *comp, char *s);
 char	*copy_last(char *s);
 char	*join(char *last, char *s);
 int		get_string(char *s, char *last, int *sum2);
-int		check_dont(char *dest, char *comp, int *sum3, int index);
+int		check_dont(char *dest, char *comp, int *sum2, int index);
 
 int	main()
 {
@@ -55,7 +55,6 @@ int	main()
 int	get_string(char *s, char *last, int *sum2)
 {
 	int sum = 0;
-	int sum3 = 0;
 	static int n;
 	static int dont;
 	char *dest = NULL;
@@ -71,19 +70,14 @@ int	get_string(char *s, char *last, int *sum2)
 		sum += get_line(dest);
 		if (dont)
 		{
-			if(check_dont(dest, "do()", &sum3, 1))
-			{
+			if(check_dont(dest, "do()", sum2, 1))
 				dont = 0;
-			}
-			*sum2 += sum + sum3;
+			*sum2 += sum;
 		}
 		else
 		{
-			if (check_dont(dest, "don't()", &sum3, 2))
-			{
+			if (check_dont(dest, "don't()", sum2, 2))
 				dont = 1;
-				*sum2 += sum3;
-			}
 		}
 		free(dest);
 		free(last);
@@ -91,16 +85,16 @@ int	get_string(char *s, char *last, int *sum2)
 	return (sum);
 }
 
-int	check_dont(char *dest, char *comp, int *sum3, int index)
+int	check_dont(char *dest, char *comp, int *sum2, int index)
 {
 	while (*dest)
 	{
 		if (compare(comp, dest))
 		{
 			if (index == 2)
-				*sum3 += get_line(dest);
+				*sum2 += get_line(dest);
 			if (index == 1)
-				*sum3 -= get_line(dest);
+				*sum2 -= get_line(dest);
 			return (1);
 		}
 		dest++;
