@@ -17,14 +17,17 @@
 
 int		check_for_xmas(char *s);
 int		find_xmas(char *s, char *xmas);
+
 char	**create_array(int array, int n);
 void	fill_array(char **av, char *s);
-void	free_mem(char **av, int i);
 int		check_array(char **av, int n);
+void	free_mem(char **av, int i);
+
 void	fill_diagonal(char **diag, int n, char **av, int option);
 int		check_diagonal(char **av);
-int		check_diagonal2(char **av);
+
 void	fill_diagonal2(char **diag, int n, char **av, int option);
+int		check_diagonal2(char **av);
 
 int	main()
 {
@@ -51,31 +54,32 @@ int	main()
 	}
 	sum += check_array(av, 140);
 	sum += check_diagonal(av);
+	sum += check_diagonal2(av);
 	free_mem(av, 139);
-	printf("%i\n", sum);
+	printf("First answer: %i\n", sum);
 	close(fd);
 }
 
 int	check_diagonal2(char **av)
 {
 	int sum = 0;
-	char **diag2 = create_array(273, 141);
-	if (!diag2)
+	char **diag = create_array(273, 141);
+	if (!diag)
 		return (0);
 	int j = 136;
 	while (j >= 0)
 	{
-		fill_diagonal2(diag2, j, av, 1);
+		fill_diagonal2(diag, j, av, 1);
 		j--;
 	}
 	j = 1;
 	while (j < 137)
 	{
-		fill_diagonal2(diag2, j, av, 2);
+		fill_diagonal2(diag, j, av, 2);
 		j++;
 	}
-	sum = check_array(diag2, 273);
-	free_mem(diag2, 272);
+	sum = check_array(diag, 273);
+	free_mem(diag, 272);
 	return (sum);
 }
 
@@ -90,6 +94,7 @@ void	fill_diagonal2(char **diag, int n, char **av, int option)
 			diag[j][i] = av[i][n + i];
 			i++;
 		}
+		diag[j][i] = '\0';
 	}
 	else
 	{
@@ -98,6 +103,7 @@ void	fill_diagonal2(char **diag, int n, char **av, int option)
 			diag[j][i] = av[n + i][i];
 			i++;		
 		}
+		diag[j][i] = '\0';
 	}
 	j++;
 }
@@ -136,6 +142,7 @@ void	fill_diagonal(char **diag, int n, char **av, int option)
 			diag[j][i] = av[i][n - i];
 			i++;
 		}
+		diag[j][i] = '\0';
 	}
 	else
 	{
@@ -144,6 +151,7 @@ void	fill_diagonal(char **diag, int n, char **av, int option)
 			diag[j][i] = av[140 - n + i][139 - i];
 			i++;		
 		}
+		diag[j][i] = '\0';
 	}
 	j++;
 }
