@@ -46,11 +46,9 @@ int	main()
 		if (b_read <= 0)
 			break ;
 		s[140] = '\0';
-		sum += check_for_xmas(s);
 		fill_array(av, s);
 	}
-	sum += check_array(av, 140);
-	sum += check_diagonal(av);
+	sum += check_diagonal2(av);
 	free_mem(av, 139);
 	printf("%i\n", sum);
 	close(fd);
@@ -59,23 +57,23 @@ int	main()
 int	check_diagonal2(char **av)
 {
 	int sum = 0;
-	char **diag2 = create_array(273, 141);
-	if (!diag2)
+	char **diag = create_array(273, 141);
+	if (!diag)
 		return (0);
 	int j = 136;
 	while (j >= 0)
 	{
-		fill_diagonal2(diag2, j, av, 1);
+		fill_diagonal2(diag, j, av, 1);
 		j--;
 	}
 	j = 1;
 	while (j < 137)
 	{
-		fill_diagonal2(diag2, j, av, 2);
+		fill_diagonal2(diag, j, av, 2);
 		j++;
 	}
-	sum = check_array(diag2, 273);
-	free_mem(diag2, 272);
+	sum = check_array(diag, 273);
+	free_mem(diag, 272);
 	return (sum);
 }
 
@@ -104,11 +102,11 @@ void	fill_diagonal2(char **diag, int n, char **av, int option)
 
 int	check_diagonal(char **av)
 {
-	int sum = 0;
-	int j = 3;
+	int sum = 0;	
 	char **diag = create_array(273, 141);
 	if (!diag)
 		return (0);
+	int j = 3;
 	while (j < 140)
 	{
 		fill_diagonal(diag, j, av, 1);
