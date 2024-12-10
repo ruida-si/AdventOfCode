@@ -20,6 +20,7 @@ int		find_xmas(char *s, char *xmas);
 
 char	**create_array(int array, int n);
 void	fill_array(char **av, char *s);
+void	fill_null(char **av);
 int		check_array(char **av, int n);
 void	free_mem(char **av, int i);
 
@@ -50,14 +51,25 @@ int	main()
 			break ;
 		s[140] = '\0';
 		sum += check_for_xmas(s);
-		fill_array(av, s);
+		fill_array(av, s);		
 	}
+	fill_null(av);	
 	sum += check_array(av, 140);
 	sum += check_diagonal(av);
 	sum += check_diagonal2(av);
 	free_mem(av, 139);
 	printf("First answer: %i\n", sum);
 	close(fd);
+}
+
+void	fill_null(char **av)
+{
+	int i = 0;
+	while (i < 140)
+	{
+		av[i][140] = '\0';
+		i++;
+	}
 }
 
 int	check_diagonal2(char **av)
