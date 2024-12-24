@@ -30,9 +30,13 @@ int		check_diagonal(char **av);
 void	fill_diagonal2(char **diag, int n, char **av, int option);
 int		check_diagonal2(char **av);
 
+int		find_a(char **av);
+int		get_mas(char **av, int i , int j, int option);
+
 int	main()
 {
 	int sum = 0;
+	int sum2 = 0;
 	int fd = open("input4", O_RDONLY);
 	if (fd < 0)
 	{
@@ -53,13 +57,67 @@ int	main()
 		sum += check_for_xmas(s);
 		fill_array(av, s);		
 	}
-	fill_null(av);	
+	fill_null(av);
+	sum2 = find_a(av);
 	sum += check_array(av, 140);
 	sum += check_diagonal(av);
 	sum += check_diagonal2(av);
 	free_mem(av, 139);
 	printf("First answer: %i\n", sum);
+	printf("Second answer: %i\n", sum2);
 	close(fd);
+}
+
+int	find_a(char **av)
+{
+	int	i;
+	int	j;
+	int	sum;
+
+	sum = 0;
+	i = 1;	
+	while (i < 139)
+	{
+		j = 1;
+		while (j < 139)
+		{
+			if (av[i][j] == 'A')
+			{
+				if (get_mas(av, i , j, 1) && get_mas(av, i , j, 0))
+					sum++;	
+			}
+			j++;
+		}
+		i++;		
+	}
+	return (sum);
+}
+
+int	get_mas(char **av, int i , int j, int option)
+{
+	int c;
+	char s1[4];
+
+	c = 0;
+	while (c < 3)
+	{
+		if (option)
+		{
+			s1[c++] = av[i -1][j +1];
+			i++;
+			j--;
+		}
+		else
+		{
+			s1[c++] = av[i +1][j +1];
+			i--;
+			j--;
+		}
+	}
+	s1[c] = '\0';
+	if (find_xmas(s1, "MAS") || find_xmas(s1, "SAM"))
+		return (1);
+	return(0);
 }
 
 void	fill_null(char **av)
