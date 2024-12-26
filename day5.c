@@ -24,9 +24,14 @@ void	check_numbers(int p[1176][2]);
 int		check_order(int i, int j, int p[1176][2]);
 int		count(int i);
 
+void	check_order2(int i, int j, int p[1176][2], int a);
+void	get_order(int i, int p[1176][2]);
+
 char str[211][70];
 int p2[210][24];
+int p3[116][24];
 int sum = 0;
+int sum2 = 0;
 
 int main()
 {
@@ -50,8 +55,9 @@ int main()
 	second_parsing(fd);
 	close(fd);
 	get_numbers2();
-	check_numbers(p);	
+	check_numbers(p);
 	printf("First answer is %i\n", sum);
+	printf("Second answer is %i\n", sum2);
 }
 
 void	get_numbers(char *s, int p[1176][2], int i)
@@ -80,20 +86,57 @@ void	check_numbers(int p[1176][2])
 	while (i < 210)
 	{
 		int j = 0;
-		int flag = 0;	
+		int flag = 0;
 		while (p2[i][j] != 0)
 		{
 			if (!check_order(i, j, p))
 			{
+				get_order(i, p);
 				flag = 1;
 				break ;
-			}			
+			}
 			j++;
 		}
 		if (!flag)
 			sum += count(i);
 		i++;
-	}	
+	}
+}
+
+void	get_order(int i, int p[1176][2])
+{
+	static int a;
+	int j = 0;
+	while (p2[i][j] != 0)
+	{
+		check_order2(i, j, p, a);
+		j++;
+	}
+	p3[a][j] = 0;
+	int k = j / 2;
+	sum2 += p3[a][k];
+	a++;
+}
+
+void	check_order2(int i, int j, int p[1176][2], int a)
+{
+	int c = 0;
+	int d = 0;
+	while (p2[i][c] != 0)
+	{
+		int k = 0;
+		while (k < 1176)
+		{
+			if (p[k][0] == p2[i][c] && p[k][1] == p2[i][j])
+			{
+				d++;				
+				break ;
+			}
+			k++;
+		}
+		c++;
+	}
+	p3[a][d] = p2[i][j];
 }
 
 int	count(int i)
