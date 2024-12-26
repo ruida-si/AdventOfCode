@@ -14,9 +14,19 @@
 #include <stdio.h>
 #include <unistd.h>
 
-void	get_numbers(char *s, int *i, int *j);
-void	get_numbers2(int fd);
-void	fill_zero(int **p);
+void	get_numbers(char *s, int p[1176][2], int i);
+
+void	second_parsing(int fd);
+void	get_string(char *s);
+void	get_numbers2();
+
+void	check_numbers(int p[1176][2]);
+int		check_order(int i, int j, int p[1176][2]);
+int		count(int i);
+
+char str[211][70];
+int p2[210][24];
+int sum = 0;
 
 int main()
 {
@@ -34,78 +44,140 @@ int main()
 	{
 		b_read = read(fd, s, 6);
 		s[5] = '\0';
-		get_numbers(s, &p[i][0], &p[i][1]);
+		get_numbers(s, p, i);
 		i++;
 	}
-	get_numbers2(fd);
+	second_parsing(fd);
 	close(fd);
+	get_numbers2();
+	check_numbers(p);	
+	printf("First answer is %i\n", sum);
 }
 
-void	get_numbers(char *s, int *i, int *j)
+void	get_numbers(char *s, int p[1176][2], int i)
 {
 	while (*s)
 	{
-		*i = 0;
-		*j = 0;
+		p[i][0] = 0;
+		p[i][1] = 0;
 		while (*s >= '0' && *s <= '9')
 		{			
-			*i = *i * 10 + (*s - '0');
+			p[i][0] = p[i][0] * 10 + (*s - '0');
 			s++;
 		}
 		s++;
 		while (*s >= '0' && *s <= '9')
 		{			
-			*j = *j * 10 + (*s - '0');
+			p[i][1] = p[i][1] * 10 + (*s - '0');
 			s++;
 		}
 	}
 }
 
-void	get_numbers2(int fd)
+void	check_numbers(int p[1176][2])
+{
+	int i = 0;
+	while (i < 210)
+	{
+		int j = 0;
+		int flag = 0;	
+		while (p2[i][j] != 0)
+		{
+			if (!check_order(i, j, p))
+			{
+				flag = 1;
+				break ;
+			}			
+			j++;
+		}
+		if (!flag)
+			sum += count(i);
+		i++;
+	}	
+}
+
+int	count(int i)
+{
+	int j = 0;
+
+	while (p2[i][j] != 0)
+		j++;
+	int a = j / 2;
+	return (p2[i][a]);
+}
+
+int	check_order(int i, int j, int p[1176][2])
+{
+	int c = j +1;
+	while (p2[i][c] != 0)
+	{
+		int k = 0;
+		while (k < 1176)
+		{
+			if (p[k][0] == p2[i][c] && p[k][1] == p2[i][j])
+				return (0);
+			k++;
+		}
+		c++;
+	}
+	return (1);
+}
+
+void	get_numbers2()
+{
+	int i = 1;
+	while (i < 211)
+	{
+		int j = 0;
+		int k = 0;
+		while (str[i][j])
+		{			
+			p2[i -1][k] = 0;			
+			while (str[i][j] >= '0' && str[i][j] <= '9')
+			{
+				p2[i -1][k] = p2[i -1][k] * 10 + (str[i][j] - '0');
+				j++;
+			}
+			k++;
+			j++;
+		}
+		p2[i -1][k] = 0;
+		i++;
+	}
+}
+
+void	second_parsing(int fd)
 {
 	int b_read = 1;
-	char s[70];
-	char p[210][70];
-	int j = 0;
+	char s[70];	
 	while (b_read)
 	{
 		b_read = read(fd, s, 69);
 		if (b_read <= 0)
 			break ;
-		int i = 0;
-		static int k;		
-		while (s[i])
-		{
-			if (s[i] != '\n')
-			{	
-				p[j][k] = s[i];
-				k++;
-				i++;
-			}
-			else
-			{
-				p[j][k] = '\0';
-				j++;
-				k = 0;
-				i++;
-			}					
-		}
+		s[b_read] = '\0';
+		get_string(s);
 	}
-	printf(".%s.\n", p[0]);
 }
 
-void	fill_zero(int **p)
+void	get_string(char *s)
 {
+	static int j;
+	static int k;
 	int i = 0;
-	int j;
-	while (i < 210)
+	while (s[i])
 	{
-		j = 0;
-		while (j < 23)
-		{
-			p[i][j] = 0;
+		if (s[i] == '\n')
+		{	
+			str[j][k] = '\0';
+			k = 0;
 			j++;
 		}
-		i++;
+		else
+		{
+			str[j][k] = s[i];
+			k++;
+		}
+		i++;				
 	}
 }
