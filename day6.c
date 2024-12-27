@@ -13,7 +13,6 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <stdlib.h>
 
 void	find_patrol();
 void	get_start(int i, int j);
@@ -22,7 +21,7 @@ int		fill_k(int i, int j);
 
 char av[130][130];
 int a = 1;
-int p[7000][2];
+int p[16900][2];
 
 int main()
 {
@@ -63,6 +62,9 @@ void	find_patrol()
 			if (av[i][j] == '^')
 			{
 				get_start(i, j);
+				p[0][0] = i;
+				p[0][1] = j;
+				return ;
 			}
 			j++;
 		}
@@ -72,8 +74,6 @@ void	find_patrol()
 
 void	get_start(int i, int j)
 {
-	p[0][0] = 0;
-	p[0][1] = 0;
 	while (check(i, j))
 	{
 		while (av[i -1][j] != '#' && check(i, j))
